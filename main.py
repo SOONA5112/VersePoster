@@ -358,3 +358,19 @@ def run_once():
 
 if __name__ == '__main__':
     run_once()
+import subprocess
+
+def update_state_on_github():
+    """
+    بعد حفظ state.json، يعمل commit و push تلقائي للريبو
+    """
+    try:
+        subprocess.run(["git", "config", "user.name", "github-actions"], check=True)
+        subprocess.run(["git", "config", "user.email", "actions@github.com"], check=True)
+        subprocess.run(["git", "add", "state.json"], check=True)
+        subprocess.run(["git", "commit", "-m", "Update last posted verse"], check=True)
+        subprocess.run(["git", "push"], check=True)
+        logger.info("✅ state.json updated and pushed to GitHub")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to update state.json on GitHub: {e}")
+
