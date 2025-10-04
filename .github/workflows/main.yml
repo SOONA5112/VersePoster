@@ -1,0 +1,31 @@
+name: Quran Verse Poster
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # يشغل كل يوم الساعة 9 صباحًا
+  workflow_dispatch: # لتشغيله يدويًا متى شئت
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv pillow pytesseract google-genai pydantic
+
+      - name: Run main.py
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          QURAN_API_BASE: ${{ secrets.QURAN_API_BASE }}
+        run: python main.py
